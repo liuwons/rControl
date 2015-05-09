@@ -1,0 +1,32 @@
+#include <QtGui/QApplication>
+#include <QRect>
+#include <QDesktopWidget>
+#include <QTime>
+
+#include <stdio.h>
+#include "version.h"
+#include "mainwindow.h"
+#include "values.h"
+
+int main(int argc, char *argv[])
+{
+#ifdef DEBUG
+    dt = QDateTime::fromString("2014-05-31 00:00:00", "yyyy-MM-dd HH:mm:ss");
+    ttime = new QTime;
+    tlog = fopen("tlog.txt", "w");
+    ttime->start();
+#endif
+
+    QApplication a(argc, argv);
+    qRegisterMetaType<QAbstractSocket::SocketError>("SocketError");
+
+    QDesktopWidget* deskWidget = a.desktop();
+    QRect screenRect  = deskWidget->screenGeometry();
+    screen_width = screenRect.width();
+    screen_height = screenRect.height();
+
+    MainWindow w;
+    w.show();
+    
+    return a.exec();
+}
