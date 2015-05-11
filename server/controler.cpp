@@ -3,7 +3,7 @@
 Controler::Controler(QObject *parent) :
     QObject(parent)
 {
-    /*
+
     vec = new QVector<SocketAndThread>;
     pMapServer = new QTcpServer;
     pMapServer->listen(QHostAddress::Any, MAP_SERVER_PORT);
@@ -13,17 +13,7 @@ Controler::Controler(QObject *parent) :
     pCmdServer = new QTcpServer;
     pCmdServer->listen(QHostAddress::Any, CMD_SERVER_PORT);
     qDebug()<<"cmd server listening"<<endl;
-    connect(pCmdServer, SIGNAL(newConnection()), this, SLOT(newCmdClient()));*/
-
-    QTcpSocket* mapsock = new QTcpSocket;
-    mapsock->connectToHost("liuwons.wicp.net", 5601);
-    MapThread* mapThread = new MapThread(mapsock);
-    mapThread->start();
-
-    QTcpSocket* cmdsock = new QTcpSocket;
-    cmdsock->connectToHost("liuwons.wicp.net", 5600);
-    CmdThread* cmdThread = new CmdThread(cmdsock);
-    cmdThread->start();
+    connect(pCmdServer, SIGNAL(newConnection()), this, SLOT(newCmdClient()));
 }
 
 /**
@@ -33,9 +23,7 @@ void Controler::newMapClient()
 {
     QTcpSocket* clientMapSocket = pMapServer->nextPendingConnection();
 
-#ifdef DEBUG
     qDebug()<<"new map connection:"<<clientMapSocket->peerAddress().toString()<<endl;
-#endif
 
     MapThread* mapThread = new MapThread(clientMapSocket);
     connect(clientMapSocket, SIGNAL(disconnected()), this, SLOT(someSocketDisconnected()));
@@ -50,9 +38,7 @@ void Controler::newCmdClient()
 {
     QTcpSocket* clientCmdSocket = pCmdServer->nextPendingConnection();
 
-#ifdef DEBUG
     qDebug()<<"new cmd connection:"<<clientCmdSocket->peerAddress().toString()<<endl;
-#endif
 
     CmdThread* cmdThread = new CmdThread(clientCmdSocket);
     connect(clientCmdSocket, SIGNAL(disconnected()), this, SLOT(someSocketDisconnected()));

@@ -12,11 +12,11 @@ ControlPanel::ControlPanel(QRect rect, QWidget *parent)
     frame_width  = -1;
     frame_height = -1;
     setGeometry(rect);
-    mapThread = new MapThread(addr, 5603, rect.width(), rect.height());
+    mapThread = new MapThread(addr, 5648, rect.width(), rect.height());
     connect(mapThread, SIGNAL(frameGot(QImage*)), this, SLOT(frameChanged(QImage*)));
     connect(mapThread, SIGNAL(frameSizeChanged(int,int)), this, SLOT(changeFrameSize(int,int)));
     mapThread->start();
-    cmdThread = new CmdThread(addr, 5602);
+    cmdThread = new CmdThread(addr, 5649);
     connect(cmdThread, SIGNAL(setServerScreenSize(int,int)), this, SLOT(gotServerScreenSize(int,int)));
     cmdThread->run();
 }

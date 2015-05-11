@@ -10,13 +10,6 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef DEBUG
-    dt = QDateTime::fromString("2014-05-31 00:00:00", "yyyy-MM-dd HH:mm:ss");
-    ttime = new QTime;
-    tlog = fopen("tlog.txt", "w");
-    ttime->start();
-#endif
-
     QApplication a(argc, argv);
     qRegisterMetaType<QAbstractSocket::SocketError>("SocketError");
 

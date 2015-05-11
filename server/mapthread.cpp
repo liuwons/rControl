@@ -32,13 +32,6 @@ extern "C"
 MapThread::MapThread(QTcpSocket* socket, QObject *parent) :
     QThread(parent)
 {
-#ifdef DEBUG
-    dt = QDateTime::fromString("2014-05-31 00:00:00", "yyyy-MM-dd HH:mm:ss");
-    log = fopen("log.txt", "w");
-    time = new QTime;
-    time->start();
-#endif
-
     sent_img_buf  = 0;
     curt_img_buf  = 0;
     send_data_buf = 0;
@@ -147,29 +140,17 @@ void MapThread::sendFrame()
         pkt = new AVPacket;
         i = 0;
 
-#ifdef DEBUG
-        fprintf(log, "Encode video file %s\n", "test.mpg");
-        fflush(log);
-#endif
         /* find the mpeg1 video encoder */
         codec = avcodec_find_encoder(AV_CODEC_ID_MPEG1VIDEO);
 
         if (codec == 0)
         {
-#ifdef DEBUG
-            fprintf(log, "Codec not found\n");
-            fflush(log);
-#endif
             exit(1);
         }
 
         c = avcodec_alloc_context3(codec);
         if (!c)
         {
-#ifdef DEBUG
-            fprintf(log, "Could not allocate video codec context\n");
-            fflush(log);
-#endif
             exit(1);
         }
         //c->bit_rate = 400000;
@@ -191,19 +172,11 @@ void MapThread::sendFrame()
         int re = avcodec_open2(c, codec, NULL);
         av_opt_set(c->priv_data, "tune", "zerolatency", 0);
         if (re < 0) {
-#ifdef DEBUG
-            fprintf(log, "Could not open codec:%d\n", re);
-            fflush(log);
-#endif
             exit(1);
         }
 
         frame = av_frame_alloc();
         if (!frame) {
-#ifdef DEBUG
-            fprintf(log, "Could not allocate video frame\n");
-            fflush(log);
-#endif
             exit(1);
         }
         frame->format = c->pix_fmt;
@@ -212,10 +185,6 @@ void MapThread::sendFrame()
 
         ret = av_image_alloc(frame->data, frame->linesize, c->width, c->height, c->pix_fmt, 32);
         if (ret < 0) {
-#ifdef DEBUG
-            fprintf(log, "Could not allocate raw picture buffer\n");
-            fflush(log);
-#endif
             exit(1);
         }
         inited = true;
@@ -224,9 +193,6 @@ void MapThread::sendFrame()
 
     if(mapSocket == 0)
     {
-#ifdef DEBUG
-        qDebug()<<"null socket"<<endl;
-#endif
         return;
     }
     else if(mapSocket->isOpen() == false)
@@ -237,18 +203,8 @@ void MapThread::sendFrame()
     {
         return;
     }
-#ifdef DEBUG
-    fprintf(log, "start cap:%d\n", QDateTime::currentDateTime().msecsTo(dt));
-#endif
     QImage image = Interface::grapScreen().toImage();
     image = image.scaled(QSize(dest_width, dest_height));
-
-#ifdef DEBUG
-    fprintf(log, "end cap:%d\n", QDateTime::currentDateTime().msecsTo(dt));
-    //fprintf(log, "cap:%d\n", time->elapsed());
-    fflush(log);
-#endif
-
 
     av_init_packet(pkt);
     pkt->data = NULL;    // packet data will be allocated by the encoder
@@ -289,28 +245,14 @@ void MapThread::sendFrame()
 
     if (ret < 0)
     {
-#ifdef DEBUG
-        fprintf(log, "Error encoding frame\n");
-        fflush(log);
-#endif
         exit(1);
     }
 
     if (got_output)
     {
-#ifdef DEBUG
-        fprintf(log, "start send:%d\n", QDateTime::currentDateTime().msecsTo(dt));
-#endif
         int ss = pkt->size;
-#ifdef DEBUG
-        qDebug()<<"ss:"<<ss;
-        fprintf(log, "size:%d\n", ss);
-#endif
         writeAndBlock(mapSocket, pkt->data, ss);
         mapSocket->flush();
-#ifdef DEBUG
-        fprintf(log, "end send:%d\n", QDateTime::currentDateTime().msecsTo(dt));
-#endif
 
         av_free_packet(pkt);
     }

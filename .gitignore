@@ -1,5 +1,6 @@
 *.user
 *.o
+*.pdb
 *.tmp
 *.obj
 *.Debug
