@@ -1,22 +1,37 @@
 #include "ScreenServer.h"
 
-#include <thread>
+#include <boost/thread.hpp>
+
+#include "encode.h"
+
+using namespace rs;
+
+void screen_proc_data_callback(void* encoded_data, int encoded_data_len, void* pUser)
+{
+    ScreenServer* s = (ScreenServer*)pUser;
+
+    char ch[10];
+    sprintf_s(ch, "%d", encoded_data_len);
+    s->asyn_deliver(boost::asio::buffer(ch, 10));
+    s->asyn_deliver(boost::asio::buffer(encoded_data, encoded_data_len));
+}
+
+void screen_func(shared_ptr<ScreenServer> screen_server)
+{
+    encode_screen(3600 * 24, screen_proc_data_callback, screen_server.get());
+}
 
 int main(int argc, char** argv)
 {
 	boost::asio::io_service io_service;
-	ScreenServer server(io_service);
-	server.start_listen();
 
-    std::thread th([&io_service]{io_service.run(); });
+    boost::shared_ptr<ScreenServer> screen_server_ptr(new ScreenServer(io_service));
+	screen_server_ptr->start_listen();
 
-    char line[10];
-    while (std::cin.getline(line, 10))
-    {
-        const char* l = line;
-        server.asyn_deliver(boost::asio::mutable_buffer(line, 10));
-        memset(line, 0, 10);
-    }
+    boost::thread th_io_service([&io_service]{io_service.run(); });
+    boost::thread th_screen(screen_func, screen_server_ptr);
+
+    screen_func(screen_server_ptr);
 
 	return 0;
 }

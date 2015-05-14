@@ -14,5 +14,3 @@
 Makefile*
 Release/
 Debug/
-rServer/Release/
-rServer/Debug/

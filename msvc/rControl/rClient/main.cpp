@@ -45,16 +45,19 @@ public:
             exit(0);
         }
 
-        int data_len = atoi(len_buf);
+        data_len = atoi(len_buf);
 
-        boost::asio::async_read(*sock_, boost::asio::buffer(buf_.get(), data_len), boost::bind(&Client::handle_read_len, this, _1, data_len));
+        boost::asio::async_read(*sock_, boost::asio::buffer(buf_.get(), data_len), boost::bind(&Client::handle_read_data, this, _1));
     }
 
-    void handle_read_data(const boost::system::error_code& error, int data_len)
+    void handle_read_data(const boost::system::error_code& error)
     {
         if (!error)
         {
             printf("read data succeed, len:%d\n", data_len);
+            FILE* f = fopen("test.avi", "ab+");
+            fwrite(buf_.get(), 1, data_len, f);
+            fclose(f);
         }
         else
         {
@@ -76,6 +79,7 @@ private:
     boost::asio::ip::tcp::endpoint endp_;
     char len_buf[10];
     boost::shared_array<char> buf_;
+    int data_len;
 };
 
 
