@@ -12,8 +12,32 @@ namespace rc
 {
     class Frame
     {
-        
-    };
+	public:
+		Frame();
+		void init(int w, int h, int dl);
+		~Frame();
+		boost::shared_array<char> data;
+		int data_len;
+		int width;
+		int height;
+	};
+
+	class FrameBuffer
+	{
+	public:
+		FrameBuffer(int w, int h, int dl, int sz);
+		FrameBuffer(Frame& f, int sz);
+		bool read_frame(Frame& dst);
+		bool write_frame(Frame& src);
+	private:
+		boost::shared_array<Frame> frames;
+		int frame_size_;
+		int filled_;
+		int read_pos_;
+		int write_pos_;
+
+		boost::mutex mutex_;
+	};
 
     class DataBuffer
     {

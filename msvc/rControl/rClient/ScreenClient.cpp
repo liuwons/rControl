@@ -46,10 +46,11 @@ void ScreenClient::handle_read_data(const boost::system::error_code& error)
 {
     if (!error)
     {
-        /*printf("read data succeed, len:%d\n", data_len);
-        FILE* f = fopen("test.avi", "ab+");
-        fwrite(buf_.get(), 1, data_len, f);
-        fclose(f);*/
+		printf("recv:%d\n", data_len);
+		FILE* f = fopen("test.avi", "ab");
+		fwrite(buf_.get(), 1, data_len, f);
+		fclose(f);
+
         if (recv_buffer_->write(buf_.get(), data_len))
         {
             printf("write buffer succeed:%d\n", data_len);
