@@ -1,88 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/shared_array.hpp>
-
-
-class Client
-{
-public:
-    Client(boost::asio::io_service& ioserv, boost::asio::ip::tcp::endpoint endp) : sock_(new boost::asio::ip::tcp::socket(ioserv)), endp_(endp), buf_(new char[1000000])
-    {
-        
-    }
-
-    void start()
-    {
-        sock_->async_connect(endp_, boost::bind(&Client::handle_connect, this, _1));
-    }
-    void handle_connect(const boost::system::error_code& error)
-    {
-        if (!error)
-        {
-            printf("connect succeed\n");
-        }
-        else
-        {
-            printf("connect error\n");
-        }
-
-        boost::asio::async_read(*sock_, boost::asio::buffer(len_buf, 10), boost::bind(&Client::handle_read_len, this, _1));
-    }
-
-    void handle_read_len(const boost::system::error_code& error)
-    {
-        if (!error)
-        {
-            printf("read len succeed:%s\n", len_buf);
-        }
-        else
-        {
-            printf("read len error\n");
-            exit(0);
-        }
-
-        data_len = atoi(len_buf);
-
-        boost::asio::async_read(*sock_, boost::asio::buffer(buf_.get(), data_len), boost::bind(&Client::handle_read_data, this, _1));
-    }
-
-    void handle_read_data(const boost::system::error_code& error)
-    {
-        if (!error)
-        {
-            printf("read data succeed, len:%d\n", data_len);
-            FILE* f = fopen("test.avi", "ab+");
-            fwrite(buf_.get(), 1, data_len, f);
-            fclose(f);
-        }
-        else
-        {
-            printf("read len error\n");
-            exit(0);
-        }
-
-        boost::asio::async_read(*sock_, boost::asio::buffer(len_buf, 10), boost::bind(&Client::handle_read_len, this, _1));
-    }
-
-
-    ~Client()
-    {
-        printf("delete client\n");
-    }
-
-private:
-    boost::shared_ptr<boost::asio::ip::tcp::socket> sock_;
-    boost::asio::ip::tcp::endpoint endp_;
-    char len_buf[10];
-    boost::shared_array<char> buf_;
-    int data_len;
-};
-
-
+#include "ScreenClient.h"
+#include "Buffer.h"
 
 int main(int argc, char** argv)
 {
@@ -94,7 +14,8 @@ int main(int argc, char** argv)
     boost::asio::io_service io_service;
     boost::asio::ip::tcp::endpoint endp(boost::asio::ip::address::from_string("127.0.0.1"), port);
 
-    boost::shared_ptr<Client> client(new Client(io_service, endp));
+    boost::shared_ptr<rc::Buffer> buf(new rc::Buffer(5 * 1024 * 1024));
+    boost::shared_ptr<ScreenClient> client(new ScreenClient(io_service, endp, buf));
     client->start();
 
     io_service.run();
