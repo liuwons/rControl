@@ -1,7 +1,7 @@
 #include "ScreenClient.h"
 
 
-ScreenClient::ScreenClient(boost::asio::io_service& ioserv, boost::asio::ip::tcp::endpoint endp, boost::shared_ptr<rc::Buffer> buf) : sock_(new boost::asio::ip::tcp::socket(ioserv)), endp_(endp), buf_(new char[1000000]), recv_buffer_(buf)
+ScreenClient::ScreenClient(boost::asio::io_service& ioserv, boost::asio::ip::tcp::endpoint endp, boost::shared_ptr<rc::DataBuffer> buf) : sock_(new boost::asio::ip::tcp::socket(ioserv)), endp_(endp), buf_(new char[1000000]), recv_buffer_(buf)
 {
 
 }

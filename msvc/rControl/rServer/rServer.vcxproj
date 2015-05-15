@@ -45,8 +45,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\bin\boost;exinclude\ffmpeg;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\bin\boost\stage\lib;exlib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\bin\boost;..\exinclude\ffmpeg;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\bin\boost\stage\lib;..\exlib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

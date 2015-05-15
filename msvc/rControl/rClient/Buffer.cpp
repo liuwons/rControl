@@ -2,7 +2,7 @@
 
 namespace rc
 {
-    Buffer::Buffer(int buf_size)
+    DataBuffer::DataBuffer(int buf_size)
     {
         boost::lock_guard<boost::mutex> lock(mutex_);
 
@@ -14,7 +14,7 @@ namespace rc
         filled_ = 0;
     }
 
-    bool Buffer::read(char* dst, int sz)
+    bool DataBuffer::read(char* dst, int sz)
     {
         boost::lock_guard<boost::mutex> lock(mutex_);
 
@@ -40,7 +40,7 @@ namespace rc
         return true;
     }
 
-    bool Buffer::write(char* src, int sz)
+    bool DataBuffer::write(char* src, int sz)
     {
         boost::lock_guard<boost::mutex> lock(mutex_);
 

@@ -6,14 +6,21 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp>
 
+#include <queue>
+
 namespace rc
 {
-    class Buffer
+    class Frame
+    {
+        
+    };
+
+    class DataBuffer
     {
     public:
         const static int DEFAULT_BUFFER_SIZE = 1024 * 1024;
 
-        Buffer(int buf_size = DEFAULT_BUFFER_SIZE);
+        DataBuffer(int buf_size = DEFAULT_BUFFER_SIZE);
 
         bool read(char* dst, int sz);
         bool write(char* src, int sz);

@@ -11,7 +11,7 @@
 class ScreenClient
 {
 public:
-    ScreenClient(boost::asio::io_service& ioserv, boost::asio::ip::tcp::endpoint endp, boost::shared_ptr<rc::Buffer> buf);
+    ScreenClient(boost::asio::io_service& ioserv, boost::asio::ip::tcp::endpoint endp, boost::shared_ptr<rc::DataBuffer> buf);
     void start();
     void handle_connect(const boost::system::error_code& error);
     void handle_read_len(const boost::system::error_code& error);
@@ -24,7 +24,7 @@ private:
     char len_buf[10];
     boost::shared_array<char> buf_;
     int data_len;
-    boost::shared_ptr<rc::Buffer> recv_buffer_;
+    boost::shared_ptr<rc::DataBuffer> recv_buffer_;
 };
 
 
