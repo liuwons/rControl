@@ -1,0 +1,10 @@
+*.user
+*.o
+*.pdb
+*.tmp
+*.obj
+*.Debug
+*.Release
+Makefile*
+debug/
+release/

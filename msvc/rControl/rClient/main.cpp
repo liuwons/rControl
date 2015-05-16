@@ -10,7 +10,8 @@
 
 int main(int argc, char** argv)
 {
-	int port = 1000;
+
+	/*int port = 1000;
 
 	if (argc > 1)
 		port = atoi(argv[1]);
@@ -31,7 +32,7 @@ int main(int argc, char** argv)
 
 	printf("starting decode\n");
 	decode->start();
-	Sleep(1000000);
+	Sleep(1000000);*/
 
 
     return 0;

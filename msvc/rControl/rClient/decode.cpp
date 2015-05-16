@@ -91,23 +91,19 @@ namespace rc
         if (got)
         {
 			fcount++;
-			printf("got frame\n");
-
-			printf("decode width:%d, height:%d\n", cctx->width, cctx->height);
 			int w = cctx->width;
 			int h = cctx->height;
 
 			avpicture_fill((AVPicture*)frame_rgb, (const uint8_t*)img_buf, PIX_FMT_RGB24, w, h);
 
 			sws_context = sws_getContext(w, h, cctx->pix_fmt, w, h, PIX_FMT_RGB24, SWS_BILINEAR, NULL, NULL, NULL);
-			int sc = sws_scale(sws_context, frame->data, frame->linesize, 0, h, frame_rgb->data, frame_rgb->linesize);
-			printf("sc:%d\n", sc);
+			sws_scale(sws_context, frame->data, frame->linesize, 0, h, frame_rgb->data, frame_rgb->linesize);
 
-			char fname[10];
+			/*char fname[10];
 			sprintf(fname, "%d.img", fcount);
 			FILE* fimg = fopen(fname, "wb");
 			fwrite(frame_rgb->data[0], 1, w*h * 3, fimg);
-			fclose(fimg);
+			fclose(fimg);*/
         }
 
 		pkt.size -= len;
