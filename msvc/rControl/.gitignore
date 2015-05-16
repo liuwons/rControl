@@ -1,6 +1,8 @@
 *.user
 *.sdf
 *.opensdf
+*.img
+*.mpg
 *.o
 *.pdb
 *.tmp

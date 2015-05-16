@@ -21,22 +21,29 @@ namespace rc
         static int io_get_data(void *opaque, char *buf, int buf_size);
         bool av_decode_header();
 
-        static int decode_packet(AVPacket* pck, Decode* dec);
+        int decode_packet();
 
+		FILE* f;
+		int fcount;
+
+		
     private:
+		SwsContext* sws_context;
+		AVCodecID codec_id_;
+		AVCodec* codec;
+		AVCodecContext* cctx;
+		AVFrame* frame;
+		AVFrame* frame_rgb;
+		AVPacket pkt;
+
+		char* img_buf;
+
         boost::shared_ptr<DataBuffer> data_buf_;
 
-		AVCodecID codec_id_;
-        AVCodec* codec;
-        AVCodecContext* cctx;
-        SwsContext      *sctx;
-		AVFrame* frame;
-		AVPacket pkt;
-        
 		boost::shared_array<char> av_buf;
 
         bool av_input_opened;
         int video_id;
-        int width, height;
+
     };
 }

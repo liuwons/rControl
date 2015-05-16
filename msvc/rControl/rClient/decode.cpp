@@ -8,6 +8,15 @@ namespace rc
     {
 		data_buf_ = data_buf;
 		codec_id_ = codec_id;
+
+		f = fopen("screen.avi", "rb+");
+		if (!f)
+		{
+			printf("open file failed\n");
+			exit(0);
+		}
+		fcount = 0;
+		img_buf = new char[1366 * 768 *5];
     }
 
     void Decode::start()
@@ -26,6 +35,9 @@ namespace rc
 		cctx = avcodec_alloc_context3(codec);
 		assert(cctx);
 
+		if (codec->capabilities&CODEC_CAP_TRUNCATED)
+			cctx->flags |= CODEC_FLAG_TRUNCATED;
+
 		if (avcodec_open2(cctx, codec, NULL) < 0)
 		{
 			fprintf(stderr, "Could not open codec\n");
@@ -37,75 +49,84 @@ namespace rc
 		}
 
 		frame = av_frame_alloc();
+		frame_rgb = av_frame_alloc();
 		assert(frame);
 
 		while (1)
 		{
+
 			if (!io_get_data(this, av_buf.get(), 1024))
 			{
-				printf("io get data: 0\n");
 				boost::thread::sleep(boost::get_system_time() + boost::posix_time::millisec(20));
 				continue;
 			}
 
-			printf("io get data:1024\n");
 			pkt.size = 1024;
 			pkt.data = (uint8_t*)(av_buf.get());
-			if (decode_packet(&pkt, this) < 0)
+
+			while (pkt.size > 0)
 			{
-				fprintf(stderr, "Decode has an error\n");
-				exit(0);
+				if (decode_packet() < 0)
+				{
+					fprintf(stderr, "Decode has an error\n");
+					exit(0);
+				}
 			}
+			
 		}
 
     }
 
-    int Decode::decode_packet(AVPacket* pck, Decode* dec)
+    int Decode::decode_packet()
     {
-        int got;
-        int len;
+        int got, len;
 
-        AVFrame* fr = av_frame_alloc();
-        len = avcodec_decode_video2(dec->cctx, fr, &got, pck);
+        len = avcodec_decode_video2(cctx, frame, &got, &pkt);
 
         if (len < 0)
         {
-            av_frame_unref(fr);
-            av_frame_free(&fr);
-            printf("\ndecode has an error:%d\n");
             return -1;
         }
 
         if (got)
         {
+			fcount++;
 			printf("got frame\n");
-            //sws_scale(dec->sctx, fr->data, fr->linesize, 0, dec->height, dec->pic->data, dec->pic->linesize);
-            //acq->mVideoBuffer->AddFrame(acq->img, acq->mFrame);
+
+			printf("decode width:%d, height:%d\n", cctx->width, cctx->height);
+			int w = cctx->width;
+			int h = cctx->height;
+
+			avpicture_fill((AVPicture*)frame_rgb, (const uint8_t*)img_buf, PIX_FMT_RGB24, w, h);
+
+			sws_context = sws_getContext(w, h, cctx->pix_fmt, w, h, PIX_FMT_RGB24, SWS_BILINEAR, NULL, NULL, NULL);
+			int sc = sws_scale(sws_context, frame->data, frame->linesize, 0, h, frame_rgb->data, frame_rgb->linesize);
+			printf("sc:%d\n", sc);
+
+			char fname[10];
+			sprintf(fname, "%d.img", fcount);
+			FILE* fimg = fopen(fname, "wb");
+			fwrite(frame_rgb->data[0], 1, w*h * 3, fimg);
+			fclose(fimg);
         }
 
-		if (pck->data)
-		{
-			pck->size -= len;
-			pck->data += len;
-		}
-
-        av_frame_unref(fr);
-        av_frame_free(&fr);
+		pkt.size -= len;
+		pkt.data += len;
 
         return 0;
     }
 
     int Decode::io_get_data(void *opaque, char *buf, int buf_size)
     {
-        Decode* dec = (Decode*)opaque;
+		Decode* dec = (Decode*)opaque;
+		int count = fread(buf, 1, buf_size, dec->f);
+		return count;
+        /*
         if (dec->data_buf_->read((char*)buf, buf_size))
             return buf_size;
         else
-            return 0;
+            return 0;*/
     }
-
-        //sctx = sws_getContext(width, height, cctx->pix_fmt, width, height, (PixelFormat)PIX_FMT_BGR24, SWS_BICUBIC, NULL, NULL, NULL);
-
 
 }
 
