@@ -19,7 +19,8 @@ void ControlPanel::setImage(char* src, int width, int height)
     boost::lock_guard<boost::mutex> lock(img_mutex);
     if(image)
         delete image;
-    image = new QImage((uchar*)src, width, height, QImage::Format_RGB888);
+    image = new QImage((uchar*)src, width, height, width*3, QImage::Format_RGB888);
+    this->update();
 }
 
 void ControlPanel::frameChanged(QImage* i)
