@@ -8,6 +8,8 @@ extern "C"
 #include <libavutil/avutil.h>
 }
 
+#include "controlpanel.h"
+
 namespace rc
 {
     class Decode
@@ -25,6 +27,8 @@ namespace rc
 
 		FILE* f;
 		int fcount;
+
+        void set_panel(ControlPanel* p);
 
 		
     private:
@@ -44,6 +48,8 @@ namespace rc
 
         bool av_input_opened;
         int video_id;
+
+        ControlPanel* panel;
 
     };
 }

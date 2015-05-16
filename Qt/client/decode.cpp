@@ -17,6 +17,13 @@ namespace rc
 		}
 		fcount = 0;
 		img_buf = new char[1366 * 768 *5];
+
+        panel = 0;
+    }
+
+    void Decode::set_panel(ControlPanel *p)
+    {
+        panel = p;
     }
 
     void Decode::start()
@@ -95,11 +102,12 @@ namespace rc
 			int w = cctx->width;
 			int h = cctx->height;
 
-			avpicture_fill((AVPicture*)frame_rgb, (const uint8_t*)img_buf, PIX_FMT_RGB24, w, h);
+            avpicture_fill((AVPicture*)frame_rgb, (const uint8_t*)img_buf, PIX_FMT_RGB24, w, h);
 
-			sws_context = sws_getContext(w, h, cctx->pix_fmt, w, h, PIX_FMT_RGB24, SWS_BILINEAR, NULL, NULL, NULL);
+            sws_context = sws_getContext(w, h, cctx->pix_fmt, w, h, PIX_FMT_RGB24, SWS_BILINEAR, NULL, NULL, NULL);
 			sws_scale(sws_context, frame->data, frame->linesize, 0, h, frame_rgb->data, frame_rgb->linesize);
 
+            panel->setImage((char*)(frame_rgb->data[0]), w, h);
 			/*char fname[10];
 			sprintf(fname, "%d.img", fcount);
 			FILE* fimg = fopen(fname, "wb");

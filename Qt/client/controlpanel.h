@@ -12,6 +12,8 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/locks.hpp>
 
 class ControlPanel : public QWidget
 {
@@ -19,11 +21,15 @@ class ControlPanel : public QWidget
 
 private:
     QImage* image;
+    boost::mutex img_mutex;
+
     uchar translateKey(int key);
 
 public:
     ControlPanel(QRect rect, QWidget *parent = 0);
     ~ControlPanel();
+
+    void setImage(char* src, int width, int height);
 
 signals:
     void mouseMoveTo(int, int);

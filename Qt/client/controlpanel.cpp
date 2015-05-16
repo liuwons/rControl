@@ -14,6 +14,14 @@ ControlPanel::~ControlPanel()
 
 }
 
+void ControlPanel::setImage(char* src, int width, int height)
+{
+    boost::lock_guard<boost::mutex> lock(img_mutex);
+    if(image)
+        delete image;
+    image = new QImage((uchar*)src, width, height, QImage::Format_RGB888);
+}
+
 void ControlPanel::frameChanged(QImage* i)
 {
     image = i;
@@ -49,8 +57,8 @@ void ControlPanel::paintEvent(QPaintEvent *e)
     if(image != 0)
     {
         QPainter p(this);
-        /*p.drawImage(QRect(0, 0, frame_width, frame_height), *image);
-        p.end();*/
+        p.drawImage(QRect(0, 0, image->width(), image->height()), *image);
+        p.end();
     }
     QWidget::paintEvent(e);
 }
