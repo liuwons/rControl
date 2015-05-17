@@ -43,6 +43,9 @@ namespace rc
 		cctx = avcodec_alloc_context3(codec);
 		assert(cctx);
 
+        cctx->width = 1366;
+        cctx->height = 768;
+
 		if (codec->capabilities&CODEC_CAP_TRUNCATED)
 			cctx->flags |= CODEC_FLAG_TRUNCATED;
 

@@ -17,11 +17,11 @@ ControlPanel::~ControlPanel()
 void ControlPanel::setImage(char* src, int width, int height)
 {
     printf("control panel set image\n");
-    /*boost::lock_guard<boost::mutex> lock(img_mutex);
+    boost::lock_guard<boost::mutex> lock(img_mutex);
     if(image)
         delete image;
     image = new QImage((uchar*)src, width, height, width*3, QImage::Format_RGB888);
-    this->update();*/
+    this->update();
 }
 
 void ControlPanel::frameChanged(QImage* i)

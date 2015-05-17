@@ -16,7 +16,7 @@
 #include "Buffer.h"
 #include "decode.h"
 
-/*int main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
@@ -31,38 +31,31 @@
     boost::asio::ip::tcp::endpoint endp(boost::asio::ip::address::from_string("127.0.0.1"), port);
 
     boost::shared_ptr<rc::DataBuffer> buf(new rc::DataBuffer(5 * 1024 * 1024));
-    boost::shared_ptr<ScreenClient> client(new ScreenClient(io_service, endp, buf));
+    //boost::shared_ptr<ScreenClient> client(new ScreenClient(io_service, endp, buf));
 
-    //boost::shared_ptr<rc::Decode> decode(new rc::Decode(buf));
+    boost::shared_ptr<rc::Decode> decode(new rc::Decode(buf));
 
     printf("starting client\n");
-    boost::thread([client]{client->start(); });
+    //boost::thread([client]{client->start(); });
 
 
     printf("starting io_service\n");
-    boost::thread([&io_service]{io_service.run(); });
+    //boost::thread([&io_service]{io_service.run(); });
 
     ControlPanel* panel = new ControlPanel(QRect(50, 50, 1000, 700));
     panel->show();
 
     printf("starting decode\n");
-    //decode->set_panel(panel);
-    //boost::thread([decode]{decode->start(); });
+    decode->set_panel(panel);
+    boost::thread([decode]{decode->start(); });
 
 
     return a.exec();
 
-}*/
-
-
-int main()
-{
-    av_register_all();
-    av_open_input_file()
 }
 
 
-int main()
+/*int main()
 {
     printf("av start register\n");
     av_register_all();
@@ -75,6 +68,15 @@ int main()
     printf("av find codec succeed\n");
 
     AVCodecContext* cctx = avcodec_alloc_context3(codec);
+
+    //cctx->bit_rate = 400000;
+    cctx->width = 1366;
+    cctx->height = 768;
+    //AVRational ar = { 1, 25 };
+    //cctx->time_base = ar;
+    //cctx->gop_size = 10;
+    //cctx->max_b_frames = 1;
+    //cctx->pix_fmt = AV_PIX_FMT_YUV420P;
 
     if (codec->capabilities&CODEC_CAP_TRUNCATED)
         cctx->flags |= CODEC_FLAG_TRUNCATED;
@@ -91,7 +93,7 @@ int main()
     }
 
     AVFrame* frame = av_frame_alloc();
-    FILE* f = fopen("test.mp4", "ab+");
+    FILE* f = fopen("test.mpg", "ab+");
     char* buf = new char[10000];
 
     int fcount = 0;
@@ -126,7 +128,7 @@ int main()
 
     }
 
-}
+}*/
 
 
 
