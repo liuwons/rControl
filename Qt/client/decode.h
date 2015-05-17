@@ -17,7 +17,7 @@ namespace rc
     public:
         const static int AV_IO_BUF_LEN = 1 * 1024 * 1024;
 
-		Decode(boost::shared_ptr<DataBuffer> data_buf, AVCodecID codec_id = AV_CODEC_ID_MPEG1VIDEO);
+        Decode(boost::shared_ptr<DataBuffer> data_buf, AVCodecID codec_id = AV_CODEC_ID_MPEG1VIDEO);
         void start();
 
         static int io_get_data(void *opaque, char *buf, int buf_size);

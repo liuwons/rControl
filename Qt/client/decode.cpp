@@ -9,7 +9,7 @@ namespace rc
 		data_buf_ = data_buf;
 		codec_id_ = codec_id;
 
-		f = fopen("screen.avi", "rb+");
+        f = fopen("test.mpg", "rb+");
 		if (!f)
 		{
 			printf("open file failed\n");
@@ -69,10 +69,10 @@ namespace rc
 				continue;
 			}
 
-            printf("decode 1024 bytes\n");
+            /*printf("decode 1024 bytes\n");
             FILE* f = fopen("test.bin", "wb");
             fwrite(av_buf.get(), 1, 1024, f);
-            fclose(f);
+            fclose(f);*/
 
 			pkt.size = 1024;
 			pkt.data = (uint8_t*)(av_buf.get());
@@ -98,6 +98,7 @@ namespace rc
 
         if (len < 0)
         {
+            printf("decode err:%d\n", len);
             return -1;
         }
 
@@ -133,8 +134,9 @@ namespace rc
     int Decode::io_get_data(void *opaque, char *buf, int buf_size)
     {
         Decode* dec = (Decode*)opaque;
-        /*int count = fread(buf, 1, buf_size, dec->f);
-        return count;*/
+        int count = fread(buf, 1, buf_size, dec->f);
+        printf("read %d bytes\n", count);
+        return count;
 
         if (dec->data_buf_->read((char*)buf, buf_size))
             return buf_size;

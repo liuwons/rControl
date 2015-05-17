@@ -42,7 +42,7 @@ namespace rc
     class DataBuffer
     {
     public:
-        const static int DEFAULT_BUFFER_SIZE = 1024 * 1024;
+        const static int DEFAULT_BUFFER_SIZE = 10 * 1024 * 1024;
 
         DataBuffer(int buf_size = DEFAULT_BUFFER_SIZE);
 
