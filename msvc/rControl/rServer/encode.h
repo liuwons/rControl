@@ -20,7 +20,7 @@ namespace rs
 {
 	typedef void(*ProcDataCallback)(void* encoded_data, int encoded_data_len, void* pUser);
 	void default_proc_data_callback(void* encoded_data, int encoded_data_len, void* pUser = 0);
-	ErrCode encode_screen(int time_secs, ProcDataCallback callback = default_proc_data_callback, void* pUser = 0, AVCodecID codec_id = AV_CODEC_ID_MPEG1VIDEO);
+	ErrCode encode_screen(int time_secs, ProcDataCallback callback = default_proc_data_callback, void* pUser = 0, AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO);
 }
 
 #endif

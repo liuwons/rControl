@@ -33,7 +33,8 @@ namespace rs
 
 	ErrCode encode_screen(int time_secs, ProcDataCallback callback, void* pUser, AVCodecID codec_id)
 	{
-		avcodec_register_all();
+		av_register_all();
+		//avcodec_register_all();
 
 		int screen_width = get_screen_width();
 		int screen_height = get_screen_height();
@@ -53,7 +54,10 @@ namespace rs
 
 		codec = avcodec_find_encoder(codec_id);
 		if (!codec)
+		{
+			printf("error:cannot find codec\n");
 			return ERR_CODEC_NOT_FOUND;
+		}
 
 		codec_context = avcodec_alloc_context3(codec);
 		if (!codec_context)
