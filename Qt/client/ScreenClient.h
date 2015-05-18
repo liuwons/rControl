@@ -3,6 +3,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/shared_array.hpp>
 
@@ -25,6 +26,7 @@ private:
     boost::shared_array<char> buf_;
     int data_len;
     boost::shared_ptr<rc::DataBuffer> recv_buffer_;
+    boost::function<void ()> on_recved_init_info;
 };
 
 

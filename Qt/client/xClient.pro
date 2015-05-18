@@ -18,13 +18,17 @@ SOURCES += main.cpp\
     controlpanel.cpp \
     decode.cpp \
     Buffer.cpp \
-    ScreenClient.cpp
+    ScreenClient.cpp \
+    struct.cpp \
+    cJSON.cpp
 
 HEADERS  += mainwindow.h \
     controlpanel.h \
     decode.h \
     Buffer.h \
-    ScreenClient.h
+    ScreenClient.h \
+    struct.h \
+    cJSON.h
 
 INCLUDEPATH += ../../exinclude/ffmpeg
 INCLUDEPATH += D:/bin/boost
