@@ -35,6 +35,8 @@ INCLUDEPATH += D:/bin/boost
 
 LIBS += /OPT:NOREF
 
+DEPENDPATH += ../../exlib
+
 LIBS += ../../exlib/avcodec.lib
 LIBS += ../../exlib/avformat.lib
 LIBS += ../../exlib/avutil.lib

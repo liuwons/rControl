@@ -4,10 +4,12 @@
 class InitInfo
 {
 public:
+    InitInfo();
+    bool valid;
     int video_width;
     int video_height;
 
-    void parse(InitInfo&, void* src);
+    void parse(void* src);
     void serialize(void* dst);
 
     const static int struct_size = 1024;

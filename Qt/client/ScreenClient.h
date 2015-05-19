@@ -8,6 +8,7 @@
 #include <boost/shared_array.hpp>
 
 #include "Buffer.h"
+#include "struct.h"
 
 class ScreenClient
 {
@@ -15,6 +16,7 @@ public:
     ScreenClient(boost::asio::io_service& ioserv, boost::asio::ip::tcp::endpoint endp, boost::shared_ptr<rc::DataBuffer> buf);
     void start();
     void handle_connect(const boost::system::error_code& error);
+    void handle_read_init_info(const boost::system::error_code& error);
     void handle_read_len(const boost::system::error_code& error);
     void handle_read_data(const boost::system::error_code& error);
     ~ScreenClient();
@@ -22,11 +24,14 @@ public:
 private:
     boost::shared_ptr<boost::asio::ip::tcp::socket> sock_;
     boost::asio::ip::tcp::endpoint endp_;
-    char len_buf[10];
-    boost::shared_array<char> buf_;
+    char tmp_buf[2048];
     int data_len;
+    boost::shared_array<char> buf_;
     boost::shared_ptr<rc::DataBuffer> recv_buffer_;
-    boost::function<void ()> on_recved_init_info;
+
+    boost::function<void ()> on_connected;
+    boost::function<void (int)> on_recved_data;
+    boost::function<void (InitInfo&)> on_recved_init_info;
 };
 
 

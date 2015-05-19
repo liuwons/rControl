@@ -11,6 +11,8 @@ void ScreenClient::start()
 {
     sock_->async_connect(endp_, boost::bind(&ScreenClient::handle_connect, this, _1));
 }
+
+
 void ScreenClient::handle_connect(const boost::system::error_code& error)
 {
     if (!error)
@@ -22,7 +24,30 @@ void ScreenClient::handle_connect(const boost::system::error_code& error)
         printf("connect error\n");
     }
 
-    boost::asio::async_read(*sock_, boost::asio::buffer(len_buf, 10), boost::bind(&ScreenClient::handle_read_len, this, _1));
+    boost::asio::async_read(*sock_, boost::asio::buffer(tmp_buf, InitInfo::struct_size), boost::bind(&ScreenClient::handle_read_init_info, this, _1));
+}
+
+void ScreenClient::handle_read_init_info(const boost::system::error_code& error)
+{
+    if(error)
+    {
+        printf("read init info error\n");
+        return;
+    }
+    else
+    {
+
+    }
+
+    InitInfo info;
+    info.parse(tmp_buf);
+    if(!info.valid)
+    {
+        printf("parse init info failed\n");
+        return;
+    }
+    on_recved_init_info(info);
+    boost::asio::async_read(*sock_, boost::asio::buffer(tmp_buf, 10), boost::bind(&ScreenClient::handle_read_len, this, _1));
 }
 
 void ScreenClient::handle_read_len(const boost::system::error_code& error)
@@ -37,7 +62,7 @@ void ScreenClient::handle_read_len(const boost::system::error_code& error)
         exit(0);
     }
 
-    data_len = atoi(len_buf);
+    data_len = atoi(tmp_buf);
 
     boost::asio::async_read(*sock_, boost::asio::buffer(buf_.get(), data_len), boost::bind(&ScreenClient::handle_read_data, this, _1));
 }
@@ -66,7 +91,7 @@ void ScreenClient::handle_read_data(const boost::system::error_code& error)
         exit(0);
     }
 
-    boost::asio::async_read(*sock_, boost::asio::buffer(len_buf, 10), boost::bind(&ScreenClient::handle_read_len, this, _1));
+    boost::asio::async_read(*sock_, boost::asio::buffer(tmp_buf, 10), boost::bind(&ScreenClient::handle_read_len, this, _1));
 }
 
 
