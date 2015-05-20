@@ -21,6 +21,10 @@ public:
     void handle_read_data(const boost::system::error_code& error);
     ~ScreenClient();
 
+    boost::function<void (const boost::system::error_code&)> on_connected;
+    boost::function<void (int)> on_recved_data;
+    boost::function<void (InitInfo&)> on_recved_init_info;
+
 private:
     boost::shared_ptr<boost::asio::ip::tcp::socket> sock_;
     boost::asio::ip::tcp::endpoint endp_;
@@ -28,10 +32,6 @@ private:
     int data_len;
     boost::shared_array<char> buf_;
     boost::shared_ptr<rc::DataBuffer> recv_buffer_;
-
-    boost::function<void ()> on_connected;
-    boost::function<void (int)> on_recved_data;
-    boost::function<void (InitInfo&)> on_recved_init_info;
 };
 
 

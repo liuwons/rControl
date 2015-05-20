@@ -29,6 +29,7 @@ namespace rc
 		int fcount;
 
         void set_panel(ControlPanel* p);
+        void set_size(int w, int h);
 
 		
     private:
@@ -50,6 +51,9 @@ namespace rc
         int video_id;
 
         ControlPanel* panel;
+
+        int width;
+        int height;
 
     };
 }

@@ -9,12 +9,12 @@ namespace rc
 		data_buf_ = data_buf;
 		codec_id_ = codec_id;
 
-        f = fopen("test.mpg", "rb+");
+        /*f = fopen("test.mpg", "rb+");
 		if (!f)
 		{
 			printf("open file failed\n");
 			exit(0);
-		}
+        }*/
 		fcount = 0;
 		img_buf = new char[1366 * 768 *5];
 
@@ -24,6 +24,12 @@ namespace rc
     void Decode::set_panel(ControlPanel *p)
     {
         panel = p;
+    }
+
+    void Decode::set_size(int w, int h)
+    {
+        width = w;
+        height = h;
     }
 
     void Decode::start()
@@ -43,8 +49,11 @@ namespace rc
 		cctx = avcodec_alloc_context3(codec);
 		assert(cctx);
 
-        cctx->width = 1366;
-        cctx->height = 768;
+        cctx->width = width;
+        cctx->height = height;
+
+        //cctx->width = 1366;
+        //cctx->height = 768;
 
 		if (codec->capabilities&CODEC_CAP_TRUNCATED)
 			cctx->flags |= CODEC_FLAG_TRUNCATED;
@@ -137,9 +146,10 @@ namespace rc
     int Decode::io_get_data(void *opaque, char *buf, int buf_size)
     {
         Decode* dec = (Decode*)opaque;
-        int count = fread(buf, 1, buf_size, dec->f);
+
+        /*int count = fread(buf, 1, buf_size, dec->f);
         printf("read %d bytes\n", count);
-        return count;
+        return count;*/
 
         if (dec->data_buf_->read((char*)buf, buf_size))
             return buf_size;
