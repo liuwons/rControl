@@ -4,7 +4,7 @@
 
 namespace rc
 {
-	Decode::Decode(boost::shared_ptr<DataBuffer> data_buf, AVCodecID codec_id)
+    Decode::Decode(boost::shared_ptr<DataBuffer> data_buf, AVCodecID codec_id): inited(false)
     {
 		data_buf_ = data_buf;
 		codec_id_ = codec_id;
@@ -26,14 +26,26 @@ namespace rc
         panel = p;
     }
 
-    void Decode::set_size(int w, int h)
+    void Decode::init(InitInfo & info)
     {
-        width = w;
-        height = h;
+        boost::lock_guard<boost::mutex> lg(init_mutex);
+
+        width = info.video_width;
+        height = info.video_height;
+        inited = true;
     }
 
     void Decode::start()
     {
+        while(1)
+        {
+            boost::lock_guard<boost::mutex> lg(init_mutex);
+            if(inited)
+                break;
+            printf("decode not init yet\n");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        }
+
         printf("av start register\n");
 		av_register_all();
 		printf("av register succeed\n");

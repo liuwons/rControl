@@ -1,5 +1,9 @@
 #include "ScreenServer.h"
 
+#include "utils.h"
+
+#include <memory>
+
 ScreenClient::ScreenClient(shared_ptr<tcp::socket> sock) :m_socket(sock)
 {
 
@@ -44,6 +48,7 @@ void ScreenServer::asyn_deliver(mutable_buffer buf)
 }
 
 
+
 void ScreenServer::accept_handler(shared_ptr<tcp::socket> psocket, error_code ec)
 {
     if (ec)
@@ -53,5 +58,16 @@ void ScreenServer::accept_handler(shared_ptr<tcp::socket> psocket, error_code ec
     std::cout << "accpet connect from:" << psocket->remote_endpoint().address() << std::endl;
 
     shared_ptr<ScreenClient> client(new ScreenClient(psocket));
+
+    InitInfo info;
+    info.video_width = rs::get_screen_width();
+    info.video_height = rs::get_screen_height();
+    char* json_str = new char[InitInfo::struct_size];
+    info.serialize(json_str);
+
+    client->asyn_deliver(boost::asio::buffer(json_str, InitInfo::struct_size));
+
+    delete[] json_str;
+
 	m_clients.insert(client);
 }

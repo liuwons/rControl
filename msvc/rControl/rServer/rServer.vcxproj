@@ -81,15 +81,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cJSON.cpp" />
     <ClCompile Include="encode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScreenServer.cpp" />
+    <ClCompile Include="struct.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cJSON.h" />
     <ClInclude Include="encode.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="ScreenServer.h" />
+    <ClInclude Include="struct.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

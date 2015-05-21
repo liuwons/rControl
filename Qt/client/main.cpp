@@ -3,9 +3,7 @@
 #include <QDesktopWidget>
 #include <QTime>
 
-#include <stdio.h>
 #include "mainwindow.h"
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,15 +33,13 @@ int main(int argc, char *argv[])
     boost::shared_ptr<rc::Decode> decode(new rc::Decode(buf));
 
     boost::shared_ptr<ScreenClient> client(new ScreenClient(io_service, endp, buf));
-    client->on_recved_init_info = [decode](InitInfo& info){decode->set_size(info.video_width, info.video_height);};
-
+    client->on_recved_init_info = [decode](InitInfo& info)
+    {
+        decode->init(info);
+    };
 
     printf("starting client\n");
     boost::thread([client]{client->start(); });
-
-
-    printf("starting io_service\n");
-    boost::thread([&io_service]{io_service.run(); });
 
     ControlPanel* panel = new ControlPanel(QRect(50, 50, 1000, 700));
     panel->show();
@@ -51,6 +47,12 @@ int main(int argc, char *argv[])
     printf("starting decode\n");
     decode->set_panel(panel);
     boost::thread([decode]{decode->start(); });
+
+    printf("starting io_service\n");
+    boost::thread([&io_service]{io_service.run(); });
+
+
+
 
 
     return a.exec();

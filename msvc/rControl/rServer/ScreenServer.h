@@ -11,6 +11,8 @@ using ip::tcp;
 using boost::system::error_code;
 using boost::shared_ptr;
 
+#include "struct.h"
+
 class ScreenClient:public boost::enable_shared_from_this<ScreenClient>
 {
 public:

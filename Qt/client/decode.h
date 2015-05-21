@@ -1,4 +1,9 @@
 #include "Buffer.h"
+#include "struct.h"
+
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread.hpp>
 
 extern "C"
 {
@@ -29,8 +34,8 @@ namespace rc
 		int fcount;
 
         void set_panel(ControlPanel* p);
-        void set_size(int w, int h);
 
+        void init(InitInfo&);
 		
     private:
 		SwsContext* sws_context;
@@ -54,6 +59,9 @@ namespace rc
 
         int width;
         int height;
+
+        boost::mutex init_mutex;
+        bool inited;
 
     };
 }
