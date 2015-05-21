@@ -9,14 +9,8 @@ namespace rc
 		data_buf_ = data_buf;
 		codec_id_ = codec_id;
 
-        /*f = fopen("test.mpg", "rb+");
-		if (!f)
-		{
-			printf("open file failed\n");
-			exit(0);
-        }*/
 		fcount = 0;
-		img_buf = new char[1366 * 768 *5];
+        img_buf = new char[1024 * 1024 * 10];
 
         panel = 0;
     }
@@ -39,11 +33,12 @@ namespace rc
     {
         while(1)
         {
+            boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+
             boost::lock_guard<boost::mutex> lg(init_mutex);
             if(inited)
                 break;
             printf("decode not init yet\n");
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         }
 
         printf("av start register\n");
@@ -64,8 +59,6 @@ namespace rc
         cctx->width = width;
         cctx->height = height;
 
-        //cctx->width = 1366;
-        //cctx->height = 768;
 
 		if (codec->capabilities&CODEC_CAP_TRUNCATED)
 			cctx->flags |= CODEC_FLAG_TRUNCATED;
@@ -92,11 +85,6 @@ namespace rc
 				boost::thread::sleep(boost::get_system_time() + boost::posix_time::millisec(20));
 				continue;
 			}
-
-            /*printf("decode 1024 bytes\n");
-            FILE* f = fopen("test.bin", "wb");
-            fwrite(av_buf.get(), 1, 1024, f);
-            fclose(f);*/
 
 			pkt.size = 1024;
 			pkt.data = (uint8_t*)(av_buf.get());
@@ -128,6 +116,7 @@ namespace rc
 
         if (got)
         {
+            printf("\n!get frame\n");
 			fcount++;
 			int w = cctx->width;
 			int h = cctx->height;
@@ -141,12 +130,6 @@ namespace rc
 
             printf("frame:%d\n", fcount);
 
-
-            /*char fname[10];
-			sprintf(fname, "%d.img", fcount);
-			FILE* fimg = fopen(fname, "wb");
-			fwrite(frame_rgb->data[0], 1, w*h * 3, fimg);
-            fclose(fimg);*/
         }
 
 		pkt.size -= len;
@@ -158,10 +141,6 @@ namespace rc
     int Decode::io_get_data(void *opaque, char *buf, int buf_size)
     {
         Decode* dec = (Decode*)opaque;
-
-        /*int count = fread(buf, 1, buf_size, dec->f);
-        printf("read %d bytes\n", count);
-        return count;*/
 
         if (dec->data_buf_->read((char*)buf, buf_size))
             return buf_size;

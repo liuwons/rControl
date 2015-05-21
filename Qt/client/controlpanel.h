@@ -21,6 +21,8 @@ class ControlPanel : public QWidget
 
 private:
     QImage* image;
+    char* image_data;
+
     boost::mutex img_mutex;
 
     uchar translateKey(int key);

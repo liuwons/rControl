@@ -30,7 +30,6 @@ namespace rc
 
         int decode_packet();
 
-		FILE* f;
 		int fcount;
 
         void set_panel(ControlPanel* p);

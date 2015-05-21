@@ -91,17 +91,16 @@ namespace rc
         boost::lock_guard<boost::mutex> lock(mutex_);
 
         if (filled_ < sz)
+        {
             return false;
+        }
 
-        printf("read %d from %d\n", sz, read_pos_);
         if (read_pos_ + sz <= buf_size_)
         {
-            printf("read only once\n");
             memcpy(dst, data.get() + read_pos_, sz);
         }
         else
         {
-            printf("read twice\n");
             int read_len1 = buf_size_ - read_pos_;
             memcpy(dst, data.get()+read_pos_, read_len1);
             memcpy(dst + read_len1, data.get(), sz - read_len1);
@@ -119,17 +118,17 @@ namespace rc
         boost::lock_guard<boost::mutex> lock(mutex_);
 
         if (filled_ + sz > buf_size_)
+        {
+            printf("write failed\n");
             return false;
+        }
 
-        printf("write %d from %d\n", sz, write_pos_);
         if (write_pos_ + sz <= buf_size_)
         {
-            printf("write once\n");
             memcpy(data.get() + write_pos_, src, sz);
         }
         else
         {
-            printf("write wtice\n");
             int write_len1 = buf_size_ - write_pos_;
             memcpy(data.get() + write_pos_, src, write_len1);
             memcpy(data.get(), src + write_len1, sz - write_len1);

@@ -22,6 +22,7 @@ void ScreenClient::handle_connect(const boost::system::error_code& error)
 
 void ScreenClient::handle_read_init_info(const boost::system::error_code& error)
 {
+    printf("read init info\n");
     InitInfo info;
 
     if(error)
@@ -30,8 +31,13 @@ void ScreenClient::handle_read_init_info(const boost::system::error_code& error)
     info.parse(tmp_buf);
 
     if(!info.valid)
+    {
+        printf("info not valid\n");
         return;
+    }
 
+
+    printf("on_recved_init_info\n");
     if(on_recved_init_info)
         on_recved_init_info(info);
 
@@ -42,7 +48,6 @@ void ScreenClient::handle_read_len(const boost::system::error_code& error)
 {
     if (!error)
     {
-        //printf("read len succeed:%s\n", len_buf);
     }
     else
     {
@@ -58,14 +63,8 @@ void ScreenClient::handle_read_data(const boost::system::error_code& error)
 {
     if (!error)
     {
-        /*printf("recv:%d\n", data_len);
-		FILE* f = fopen("test.avi", "ab");
-		fwrite(buf_.get(), 1, data_len, f);
-        fclose(f);*/
-
         if (recv_buffer_->write(buf_.get(), data_len))
         {
-            printf("write buffer succeed:%d\n", data_len);
         }
         else
         {
@@ -74,7 +73,7 @@ void ScreenClient::handle_read_data(const boost::system::error_code& error)
     }
     else
     {
-        printf("read data error\n");
+        printf("read asio data error\n");
         return;
     }
 

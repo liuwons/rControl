@@ -11,6 +11,7 @@ InitInfo::InitInfo()
 
 void InitInfo::parse(void *src)
 {
+    printf("json:%s\n", (char*)src);
     cJSON* json = cJSON_Parse((char*)src);
     if(!json)
     {

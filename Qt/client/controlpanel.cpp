@@ -6,12 +6,15 @@ ControlPanel::ControlPanel(QRect rect, QWidget *parent)
 {
     setMouseTracking(true);
     image = 0;
+    image_data = new char[10*1024*1024];
     setGeometry(rect);
 }
 
 ControlPanel::~ControlPanel()
 {
-
+    if(image)
+        delete image;
+    delete[] image_data;
 }
 
 void ControlPanel::setImage(char* src, int width, int height)
@@ -20,7 +23,8 @@ void ControlPanel::setImage(char* src, int width, int height)
     boost::lock_guard<boost::mutex> lock(img_mutex);
     if(image)
         delete image;
-    image = new QImage((uchar*)src, width, height, width*3, QImage::Format_RGB888);
+    memcpy(image_data, src, width*height*3);
+    image = new QImage((uchar*)image_data, width, height, width*3, QImage::Format_RGB888);
     this->update();
 }
 
