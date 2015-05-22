@@ -19,7 +19,7 @@ public:
     ScreenClient(shared_ptr<tcp::socket> sock);
 	virtual ~ScreenClient();
 	void asyn_deliver(mutable_buffer buf);
-    void write_handler(const error_code& ec);
+    void write_handler(const error_code& ec, mutable_buffer buf, size_t byte_transfered);
     shared_ptr<tcp::socket> m_socket;
     int m_id;
 };

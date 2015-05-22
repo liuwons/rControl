@@ -18,10 +18,10 @@ ScreenClient::~ScreenClient()
 void ScreenClient::asyn_deliver(mutable_buffer buf)
 {
     printf("client deliver %d bytes\n", boost::asio::detail::buffer_size_helper(buf));
-    boost::asio::async_write(*m_socket, buffer(buf), boost::bind(&ScreenClient::write_handler, this, _1));
+    boost::asio::async_write(*m_socket, buffer(buf), boost::bind(&ScreenClient::write_handler, this, _1, buf, _2));
 }
 
-void ScreenClient::write_handler(const error_code& ec)
+void ScreenClient::write_handler(const error_code& ec, mutable_buffer buf, size_t byte_transfered)
 {
     if (ec)
         std::cout << "client asyn write error" << std::endl;
@@ -46,7 +46,6 @@ void ScreenServer::asyn_deliver(mutable_buffer buf)
 		(*iter)->asyn_deliver(buf);
 	}
 }
-
 
 
 void ScreenServer::accept_handler(shared_ptr<tcp::socket> psocket, error_code ec)
